@@ -2,166 +2,425 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mini Bilmece Oyunu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+  <title>Mobil Clicker</title>
   <style>
-    :root{
-      --bg:#0f1724;
-      --card:#0b1220;
-      --accent:#6ee7b7;
-      --muted:#94a3b8;
-      --glass: rgba(255,255,255,0.03);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(180deg,#071024 0%, #081424 100%);
-      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      color: #e6eef8;
-      padding:24px;
-    }
-    .wrap{
-      width:100%;max-width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-      border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 6px 30px rgba(2,6,23,0.6);
-    }
-    header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042023}
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071026);color:#e6eef6}
+    .app{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:18px}
+    header{width:100%;max-width:720px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
     h1{font-size:18px;margin:0}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-
-    .card{background:var(--card);padding:18px;border-radius:12px;margin-top:10px;border:1px solid rgba(255,255,255,0.03)}
-    .bilmece{font-size:16px;line-height:1.4}
-
-    form{display:flex;gap:8px;margin-top:14px}
-    input[type="text"]{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:15px}
-    button{padding:0 16px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#60a5fa);color:#042023;font-weight:700;font-size:15px}
-
-    .info{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-    .puan{font-weight:700}
-    .feedback{margin-top:10px;height:28px;display:flex;align-items:center}
-    .feedback.success{color:#8ef3c8}
-    .feedback.error{color:#ffb4b4}
-
-    .finish{display:none;text-align:center;padding:16px}
+    .top-info{display:flex;gap:8px;align-items:center}
+    .card{background:rgba(255,255,255,0.03);border-radius:14px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6);width:100%;max-width:720px}
+    .score{font-size:36px;text-align:center;margin:8px 0}
+    .big-btn{width:100%;padding:26px;border-radius:14px;text-align:center;font-size:28px;background:linear-gradient(180deg,var(--accent),#0aa3b3);color:#042023;border:0;box-shadow:0 8px 20px rgba(6,182,212,0.18);transition:transform .08s ease, box-shadow .12s}
+    .big-btn:active{transform:scale(.96)}
+    .controls{display:flex;gap:8px;margin-top:12px}
+    .controls button{flex:1;padding:10px;border-radius:10px;border:0;background:rgba(255,255,255,0.04);color:var(--muted)}
+    .shop{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+    .shop-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02)}
     .small{font-size:13px;color:var(--muted)}
-
-    footer{margin-top:14px;text-align:center}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted)}
-
-    @media (max-width:420px){.wrap{padding:16px}}
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
+    .coin{position:absolute;font-weight:700;pointer-events:none;transform:translateY(0);opacity:1;animation:floatUp 900ms ease-out}
+    @keyframes floatUp{from{transform:translateY(0) scale(1);opacity:1}to{transform:translateY(-140px) scale(.8);opacity:0}}
+    .theme-select{padding:6px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);color:inherit}
+    .task-list{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .task{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+    .badge{display:inline-block;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,0.03);font-size:12px}
+    .leaderboard{margin-top:12px}
+    @media(min-width:600px){.big-btn{font-size:34px;padding:40px;border-radius:18px}.score{font-size:44px}}
   </style>
 </head>
 <body>
-  <div class="wrap" role="application">
+  <div class="app">
     <header>
-      <div class="logo">B</div>
-      <div>
-        <h1>Mini Bilmece Oyunu</h1>
-        <p class="lead">Her doğru cevap +10 puan — Bilmeceyi çöz!</p>
-      </div>
+      <h1>Mobil Clicker</h1>
+      <div class="top-info small">Tıklamalar: <span id="clicksDisplay">0</span></div>
     </header>
 
-    <main>
-      <section class="card" aria-live="polite">
-        <div class="bilmece" id="bilmeceText">Yükleniyor...</div>
-
-        <form id="cevapForm" onsubmit="return false;" aria-label="Cevap formu">
-          <input id="cevapInput" type="text" placeholder="Cevabınızı yazın..." autocomplete="off" />
-          <button id="gonderBtn" type="submit">Gönder</button>
-        </form>
-
-        <div class="info">
-          <div class="puan">Puan: <span id="puan">0</span></div>
-          <div class="small" id="kalan">Bilmece 1 / 1</div>
+    <div class="card" id="gameCard">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="score small">Puan</div>
+          <div id="score" class="score">0</div>
         </div>
+        <div style="text-align:right">
+          <div class="small">Prestij: <span id="prestigeLevel">0</span></div>
+          <div class="small">Çarpan: x<span id="prestigeMul">1</span></div>
+        </div>
+      </div>
 
-        <div id="feedback" class="feedback" aria-live="assertive"></div>
+      <button id="tap" class="big-btn" aria-label="Tap to earn">TAP</button>
 
-        <div class="finish" id="finishBox">
-          <h3 id="finishTitle">Tebrikler!</h3>
-          <p class="small" id="finishText">Tüm bilmeceleri çözdünüz.</p>
-          <div style="margin-top:12px">
-            <button class="btn-ghost" id="yeniden">Yeniden Başlat</button>
+      <div class="controls">
+        <button id="reset">Sıfırla</button>
+        <button id="save">Kaydet</button>
+        <select id="theme" class="theme-select">
+          <option value="dark">Koyu</option>
+          <option value="light">Açık</option>
+          <option value="retro">Retro</option>
+        </select>
+      </div>
+
+      <div class="shop">
+        <div class="shop-item">
+          <div>
+            <div><strong>+1 Tık Gücü</strong></div>
+            <div class="small">Her tıkta +1 ekstra</div>
+          </div>
+          <div>
+            <div class="small">Fiyat: <span id="priceUpgrade">50</span></div>
+            <button id="buyUpgrade">Satın Al</button>
           </div>
         </div>
-      </section>
 
-      <footer style="margin-top:12px;text-align:center;color:var(--muted);font-size:13px">
-        İstersen zamanlayıcı, ipucu ya da skor kaydetme ekleyebilirim.
-      </footer>
-    </main>
+        <div class="shop-item">
+          <div>
+            <div><strong>Otomatik Tıkçı (Seviye)</strong></div>
+            <div class="small">Her saniye autoLevel kadar puan</div>
+          </div>
+          <div>
+            <div class="small">Fiyat: <span id="priceAuto">200</span></div>
+            <button id="buyAuto">Satın Al</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div>
+            <div><strong>x2 Kazanç (Süreli)</strong></div>
+            <div class="small">30s süreyle tüm kazanımlar iki kat</div>
+          </div>
+          <div>
+            <div class="small">Fiyat: <span id="priceBoost">150</span></div>
+            <button id="buyBoost">Satın Al</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div>
+            <div><strong>Mega Tık</strong></div>
+            <div class="small">Anlık büyük kazanç (+50)</div>
+          </div>
+          <div>
+            <div class="small">Fiyat: <span id="priceMega">500</span></div>
+            <button id="buyMega">Satın Al</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div>
+            <div><strong>Hızlı Otomatik (Hızlandırıcı)</strong></div>
+            <div class="small">Otomatik tıklama hızını artırır</div>
+          </div>
+          <div>
+            <div class="small">Fiyat: <span id="priceSpeed">350</span></div>
+            <button id="buySpeed">Satın Al</button>
+          </div>
+        </div>
+
+        <div class="shop-item">
+          <div>
+            <div><strong>Reklam İzle (Simüle)</strong></div>
+            <div class="small">Bonus için reklam izle (simülasyon)</div>
+          </div>
+          <div>
+            <button id="watchAd">İzle (simüle)</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="small" style="margin-top:10px">Çevrimdışı kazanç: etkin (basit simülasyon). Görevler ve liderlik lokal olarak tutulur.</div>
+
+      <div class="task-list" id="tasks"></div>
+
+      <div class="leaderboard" id="leaderboard"></div>
+
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <button id="prestigeBtn">Prestij Yap (reset)</button>
+        <div class="small">(Prestij puanı kalıcı)</div>
+      </div>
+
+    </div>
+
+    <footer>Mobil uyumlu. PWA ya da Cordova/Capacitor ile paketlenebilir.</footer>
   </div>
 
-  <script>
-    // Türkçe bilmeceler dizisi (dilediğin gibi ekle / değiştir)
-    const bilmeceler = [
-      {q: "Suda yürür, ıslanmaz; nedir?", a: "gölge"},
-      {q: "İki başı var bir gövdesi, ne olduğunu bilen söylesin?", a: "ırmak"},
-      {q: "Yazın serinleten, kışın ısıtan; nedir?", a: "rüzgar"},
-      {q: "Evli ama içinde tek kişi yaşar; bu nedir?", a: "yuva"},
-      {q: "Adı var ama konuşamaz; nedir?", a: "kitap"}
-    ];
+<script>
+// --- Elementler
+const scoreEl = document.getElementById('score');
+const tapBtn = document.getElementById('tap');
+const clicksDisplay = document.getElementById('clicksDisplay');
+const priceUpgradeEl = document.getElementById('priceUpgrade');
+const priceAutoEl = document.getElementById('priceAuto');
+const priceBoostEl = document.getElementById('priceBoost');
+const priceMegaEl = document.getElementById('priceMega');
+const priceSpeedEl = document.getElementById('priceSpeed');
+const tasksEl = document.getElementById('tasks');
+const leaderboardEl = document.getElementById('leaderboard');
+const prestigeLevelEl = document.getElementById('prestigeLevel');
+const prestigeMulEl = document.getElementById('prestigeMul');
 
-    let index = 0;
-    let puan = 0;
+// --- Oyun durumu
+let state = {
+  score: 0,
+  clicks: 0,
+  perClick: 1,
+  autoLevel: 0,
+  autoIntervalMs: 1000,
+  boosts: 0,
+  boostActiveUntil: 0,
+  prestige: 0,
+  prestigeMul: 1,
+  lastSave: Date.now(),
+  theme: 'dark',
+  tasks: [],
+  leaderboard: []
+}
 
-    const bilmeceText = document.getElementById('bilmeceText');
-    const cevapInput = document.getElementById('cevapInput');
-    const gonderBtn = document.getElementById('gonderBtn');
-    const puanEl = document.getElementById('puan');
-    const feedback = document.getElementById('feedback');
-    const kalan = document.getElementById('kalan');
-    const finishBox = document.getElementById('finishBox');
-    const finishTitle = document.getElementById('finishTitle');
-    const finishText = document.getElementById('finishText');
-    const yeniden = document.getElementById('yeniden');
+const PRICES = {upgradeBase:50, autoBase:200, boostBase:150, megaBase:500, speedBase:350}
 
-    function yukle(){
-      if(index >= bilmeceler.length){
-        bitir();
-        return;
+// --- Ses (WebAudio) - basit klik sesi
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playClick(){
+  try{
+    if(!audioCtx) audioCtx = new AudioCtx();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = 600 + Math.random()*200;
+    g.gain.value = 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.06);
+  }catch(e){/* sessiz hata */}
+}
+
+// --- UI güncelleme
+function updateUI(){
+  scoreEl.textContent = Math.floor(state.score);
+  clicksDisplay.textContent = state.clicks;
+  priceUpgradeEl.textContent = Math.floor(PRICES.upgradeBase * Math.pow(1.6, state.perClick-1));
+  priceAutoEl.textContent = Math.floor(PRICES.autoBase * Math.pow(2, state.autoLevel));
+  priceBoostEl.textContent = PRICES.boostBase;
+  priceMegaEl.textContent = PRICES.megaBase;
+  priceSpeedEl.textContent = PRICES.speedBase * (state.autoIntervalMs<=500?2:1);
+  prestigeLevelEl.textContent = state.prestige;
+  prestigeMulEl.textContent = state.prestigeMul.toFixed(1);
+  renderTasks();
+  renderLeaderboard();
+  applyTheme(state.theme);
+}
+
+// --- Load & Save
+function save(){
+  state.lastSave = Date.now();
+  localStorage.setItem('clicker_state_v2', JSON.stringify(state));
+}
+function load(){
+  const raw = localStorage.getItem('clicker_state_v2');
+  if(raw){
+    try{
+      const s = JSON.parse(raw);
+      state = Object.assign(state, s);
+      // offline kazanç
+      const deltaSeconds = Math.floor((Date.now()-state.lastSave)/1000);
+      if(deltaSeconds>0 && state.autoLevel>0){
+        const offline = deltaSeconds * state.autoLevel * state.prestigeMul;
+        state.score += offline;
       }
-      const b = bilmeceler[index];
-      bilmeceText.textContent = b.q;
-      kalan.textContent = `Bilmece ${index+1} / ${bilmeceler.length}`;
-      cevapInput.value = '';
-      cevapInput.focus();
-      feedback.textContent = '';
-      finishBox.style.display = 'none';
+    }catch(e){console.warn(e)}
+  }
+}
+
+// --- Tap fonksiyonu (animasyon, coin efekti, ses)
+function spawnCoin(x,y,txt){
+  const coin = document.createElement('div');
+  coin.className = 'coin';
+  coin.style.left = (x - 16) + 'px';
+  coin.style.top = (y - 16) + 'px';
+  coin.textContent = txt;
+  document.body.appendChild(coin);
+  setTimeout(()=>coin.remove(),900);
+}
+
+function tap(e){
+  const gain = state.perClick * state.prestigeMul * (Date.now()<state.boostActiveUntil?2:1);
+  state.score += gain;
+  state.clicks += 1;
+  updateUI();
+  // ses
+  playClick();
+  // coin efekti
+  const rect = tapBtn.getBoundingClientRect();
+  const x = rect.left + rect.width/2 + (Math.random()-0.5)*80;
+  const y = rect.top + (Math.random()*40);
+  spawnCoin(x,y, '+'+Math.floor(gain));
+  // hafif buton animasyonu
+  tapBtn.style.transform = 'scale(0.97)';
+  setTimeout(()=>tapBtn.style.transform = '',80);
+}
+
+// --- Mağaza işlemleri
+function buyUpgrade(){
+  const price = Math.floor(PRICES.upgradeBase * Math.pow(1.6, state.perClick-1));
+  if(state.score >= price){ state.score -= price; state.perClick += 1; save(); updateUI(); }
+  else navigator.vibrate && navigator.vibrate(60);
+}
+function buyAuto(){
+  const price = Math.floor(PRICES.autoBase * Math.pow(2, state.autoLevel));
+  if(state.score >= price){ state.score -= price; state.autoLevel += 1; save(); updateUI(); }
+  else navigator.vibrate && navigator.vibrate(80);
+}
+function buyBoost(){
+  const price = PRICES.boostBase;
+  if(state.score >= price){ state.score -= price; state.boostActiveUntil = Date.now() + 30000; save(); updateUI(); }
+}
+function buyMega(){
+  const price = PRICES.megaBase;
+  if(state.score >= price){ state.score -= price; state.score += 50 * state.prestigeMul; save(); updateUI(); spawnCoin(window.innerWidth/2, window.innerHeight/2, '+50'); }
+}
+function buySpeed(){
+  const price = PRICES.speedBase;
+  if(state.score >= price){ state.score -= price; state.autoIntervalMs = Math.max(200, state.autoIntervalMs - 200); save(); updateUI(); }
+}
+
+// --- Simüle reklam izleme
+function watchAd(){
+  // basit simülasyon: 3s beklet sonra bonus ver
+  const btn = document.getElementById('watchAd');
+  btn.disabled = true; btn.textContent = 'İzleniyor...';
+  setTimeout(()=>{
+    state.score += 100 * state.prestigeMul; save(); updateUI(); btn.disabled = false; btn.textContent = 'İzle (simüle)';
+    alert('Reklam bitti, +100 bonus!');
+  },3000);
+}
+
+// --- Otomatik tıklama (hız dinamik)
+let autoTimer = null;
+function restartAuto(){
+  if(autoTimer) clearInterval(autoTimer);
+  autoTimer = setInterval(()=>{
+    if(state.autoLevel>0){
+      const amt = state.autoLevel * state.prestigeMul * (Date.now()<state.boostActiveUntil?2:1);
+      state.score += amt;
+      updateUI();
     }
+  }, state.autoIntervalMs);
+}
 
-    function kontrol(){
-      const cevap = cevapInput.value.trim().toLowerCase();
-      if(!cevap) return;
-      const dogru = bilmeceler[index].a.toLowerCase();
-      if(cevap === dogru){
-        puan += 10;
-        puanEl.textContent = puan;
-        feedback.textContent = 'Doğru! +10 puan.';
-        feedback.className = 'feedback success';
-        index++;
-        setTimeout(yukle, 900);
-      } else {
-        feedback.textContent = `Yanlış. Doğru cevap: ${bilmeceler[index].a}`;
-        feedback.className = 'feedback error';
-        // yanlışta ilerlemek istersen index++ ekle
-        setTimeout(()=>{ cevapInput.focus(); }, 300);
-      }
-    }
+// --- Görev sistemi (basit günlük görevler)
+function seedTasks(){
+  if(state.tasks && state.tasks.length>0) return; // varsa bırak
+  state.tasks = [
+    {id:1,text:'10 kere tıkla',goal:10,progress:0,reward:50,done:false},
+    {id:2,text:'Bir yükseltme al',goal:1,progress:0,reward:120,done:false},
+    {id:3,text:'Toplam 100 puan kazan',goal:100,progress:0,reward:200,done:false}
+  ];
+}
+function renderTasks(){
+  tasksEl.innerHTML = '';
+  state.tasks.forEach(t=>{
+    const div = document.createElement('div'); div.className='task';
+    div.innerHTML = `<div>${t.text} <div class="small">(${t.progress}/${t.goal})</div></div>`;
+    const btn = document.createElement('button'); btn.textContent = t.done? 'Alındı' : 'Al'; btn.disabled = !t.done;
+    btn.addEventListener('click', ()=>{ if(t.done){ state.score += t.reward; t.done=true; save(); updateUI(); } });
+    div.appendChild(btn); tasksEl.appendChild(div);
+  });
+}
 
-    function bitir(){
-      bilmeceText.textContent = '';
-      finishBox.style.display = 'block';
-      finishTitle.textContent = 'Tebrikler!';
-      finishText.textContent = `Tüm bilmeceler bitti. Toplam puan: ${puan}`;
-    }
+function checkTasks(){
+  state.tasks.forEach(t=>{
+    if(t.id===1) t.progress = Math.min(t.goal, state.clicks);
+    if(t.id===2) t.progress = Math.min(t.goal, state.perClick-1);
+    if(t.id===3) t.progress = Math.min(t.goal, Math.floor(state.score));
+    if(t.progress>=t.goal) t.done = true;
+  });
+}
 
-    gonderBtn.addEventListener('click', kontrol);
-    cevapInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') kontrol(); });
-    yeniden.addEventListener('click', function(){ index=0; puan=0; puanEl.textContent = puan; yukle(); });
+// --- Leaderboard (local)
+function updateLeaderboard(){
+  // local leaderboard: kaydet kullanıcı adıyla
+  const name = prompt('Skorunu kaydetmek için isim gir (iptal etmezsen kayıt yapılmaz):');
+  if(!name) return;
+  state.leaderboard.push({name:name,score:Math.floor(state.score)});
+  state.leaderboard.sort((a,b)=>b.score-a.score);
+  state.leaderboard = state.leaderboard.slice(0,10);
+  save(); updateUI();
+}
+function renderLeaderboard(){
+  if(state.leaderboard.length===0){ leaderboardEl.innerHTML = '<div class="small">Liderlik tablosu boş. Skor kaydet.</div>'; return; }
+  leaderboardEl.innerHTML = '<strong>Liderlik</strong>' + '<ol>' + state.leaderboard.map(l=>`<li>${l.name} — ${l.score}</li>`).join('') + '</ol>';
+}
 
-    // Başlangıçta yükle
-    yukle();
-  </script>
+// --- Prestij sistemi
+function doPrestige(){
+  if(state.score < 1000){ alert('Prestij için en az 1000 puan gerekli.'); return; }
+  if(!confirm('Prestij yapmak puanı sıfırlar ama kalıcı prestij puanı verir. Devam et?')) return;
+  state.prestige += 1;
+  state.prestigeMul = 1 + state.prestige * 0.25; // her prestij %25 daha fazla
+  // reset temel değerler
+  state.score = 0; state.clicks = 0; state.perClick = 1; state.autoLevel = 0; state.autoIntervalMs = 1000;
+  save(); updateUI();
+}
+
+// --- Tema uygulama
+function applyTheme(t){
+  const card = document.getElementById('gameCard');
+  state.theme = t;
+  document.getElementById('theme').value = t;
+  if(t==='light'){
+    document.documentElement.style.setProperty('--bg','#f5f7fb');
+    document.documentElement.style.setProperty('--card','#ffffff');
+    document.documentElement.style.setProperty('--accent','#06b6d4');
+    document.documentElement.style.setProperty('--muted','#475569');
+    card.style.color = '#042023';
+  } else if(t==='retro'){
+    document.documentElement.style.setProperty('--bg','#1b1b1b');
+    document.documentElement.style.setProperty('--card','#0f1724');
+    document.documentElement.style.setProperty('--accent','#f59e0b');
+    document.documentElement.style.setProperty('--muted','#f3e8ff');
+    card.style.color = 'white';
+  } else {
+    document.documentElement.style.setProperty('--bg','#0f1724');
+    document.documentElement.style.setProperty('--card','#0b1220');
+    document.documentElement.style.setProperty('--accent','#06b6d4');
+    document.documentElement.style.setProperty('--muted','#94a3b8');
+    card.style.color = '';
+  }
+}
+
+// --- Event listeners
+tapBtn.addEventListener('touchstart', (e)=>{ tap(e); e.preventDefault(); });
+tapBtn.addEventListener('click', tap);
+document.getElementById('buyUpgrade').addEventListener('click', buyUpgrade);
+document.getElementById('buyAuto').addEventListener('click', buyAuto);
+document.getElementById('buyBoost').addEventListener('click', buyBoost);
+document.getElementById('buyMega').addEventListener('click', buyMega);
+document.getElementById('buySpeed').addEventListener('click', buySpeed);
+document.getElementById('watchAd').addEventListener('click', watchAd);
+document.getElementById('reset').addEventListener('click', ()=>{ if(confirm('Sıfırlamak istediğine emin misin?')){ state = {score:0,clicks:0,perClick:1,autoLevel:0,autoIntervalMs:1000,boosts:0,boostActiveUntil:0,prestige:state.prestige,prestigeMul:state.prestigeMul,lastSave:Date.now(),theme:state.theme,tasks:state.tasks,leaderboard:state.leaderboard}; save(); updateUI(); } });
+document.getElementById('save').addEventListener('click', ()=>{ save(); alert('Kaydedildi'); });
+document.getElementById('prestigeBtn').addEventListener('click', doPrestige);
+document.getElementById('theme').addEventListener('change', (e)=>{ applyTheme(e.target.value); save(); });
+
+// Kısayol: liderlik kaydet
+document.addEventListener('keydown', (e)=>{ if(e.key==='l') updateLeaderboard(); });
+
+// --- Oyun döngüsü
+seedTasks();
+load();
+updateUI();
+restartAuto();
+setInterval(()=>{ checkTasks(); updateUI(); save(); },1000*5);
+
+// İlk ziyaret tutorial
+if(!localStorage.getItem('clicker_seen_tutorial_v2')){
+  alert('TAP tuşuna dokunarak puan kazan. Mağazadan yükseltmeler alabilirsin. Prestij için 1000 puan gerekiyor. "l" tuşu ile liderlik tablosuna kaydedebilirsin.');
+  localStorage.setItem('clicker_seen_tutorial_v2','1');
+}
+
+</script>
 </body>
 </html>
