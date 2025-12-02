@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilmece Ustası</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .riddle-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .riddle-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .riddle-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .input-section {
+            position: relative;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            transition: border-color 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback-card {
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .feedback-message {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .feedback-detail {
+            font-size: 1em;
+            color: #666;
+        }
+
+        .correct {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+        }
+
+        .correct .feedback-detail {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .incorrect {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .incorrect .feedback-detail {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .game-over {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .game-over h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .riddle-text {
+                font-size: 1.1em;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🧩 Bilmece Ustası</h1>
+            <div class="score-display">Puan: <span id="score">0</span></div>
+        </div>
+
+        <div class="card riddle-card" id="riddleCard">
+            <div class="riddle-number" id="riddleNumber">1/10</div>
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>Bilmece yükleniyor...</span>
+            </div>
+            <p class="riddle-text" id="riddleText" style="display: none;"></p>
+        </div>
+
+        <div class="card input-section" id="inputSection">
+            <input 
+                type="text" 
+                class="answer-input" 
+                id="answerInput" 
+                placeholder="Cevabınızı buraya yazın..."
+                autocomplete="off"
+                disabled
+            >
+            <button class="submit-btn" id="submitBtn" disabled>Cevabı Gönder</button>
+        </div>
+
+        <div class="card feedback-card" id="feedbackCard">
+            <div class="feedback-message" id="feedbackMessage">
+                Bilmece yükleniyor...
+            </div>
+            <div class="feedback-detail" id="feedbackDetail">
+                Yapay zeka sizin için eşsiz bilmeceler oluşturuyor! 🤖
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRiddle = 0;
+        let score = 0;
+        let answered = false;
+        let currentRiddleData = null;
+        const totalRiddles = 10;
+
+        const riddleText = document.getElementById('riddleText');
+        const riddleNumber = document.getElementById('riddleNumber');
+        const answerInput = document.getElementById('answerInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const feedbackCard = document.getElementById('feedbackCard');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const feedbackDetail = document.getElementById('feedbackDetail');
+        const scoreDisplay = document.getElementById('score');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        async function generateRiddle() {
+            try {
+                loadingIndicator.style.display = 'flex';
+                riddleText.style.display = 'none';
+                answerInput.disabled = true;
+                submitBtn.disabled = true;
+
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        messages: [{
+                            role: "user",
+                            content: `Türkçe orta zorlukta bir bilmece oluştur. Bilmece eğlenceli ve yaratıcı olsun. 
+                            
+                            Cevabını SADECE şu JSON formatında ver, başka hiçbir şey yazma:
+                            {"soru": "bilmece sorusu buraya", "cevap": "tek kelime cevap buraya"}
+                            
+                            Cevap tek kelime olmalı ve küçük harflerle yazılmalı. Örnek cevaplar: kalem, saat, kitap, ayna, vb.`
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                let textContent = data.content.find(item => item.type === "text")?.text || "";
+                
+                // JSON'u temizle
+                textContent = textContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                
+                const riddleData = JSON.parse(textContent);
+                currentRiddleData = riddleData;
+
+                loadingIndicator.style.display = 'none';
+                riddleText.style.display = 'block';
+                riddleText.textContent = riddleData.soru;
+                
+                answerInput.disabled = false;
+                submitBtn.disabled = false;
+                answerInput.focus();
+
+                return true;
+            } catch (error) {
+                console.error('Bilmece oluşturma hatası:', error);
+                loadingIndicator.style.display = 'none';
+                riddleText.style.display = 'block';
+                riddleText.innerHTML = `
+                    <div class="error-message">
+                        ⚠️ Bilmece oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.
+                    </div>
+                `;
+                return false;
+            }
+        }
+
+        async function loadRiddle() {
+            if (currentRiddle >= totalRiddles) {
+                showGameOver();
+                return;
+            }
+
+            riddleNumber.textContent = `${currentRiddle + 1}/${totalRiddles}`;
+            answerInput.value = '';
+            answered = false;
+            submitBtn.textContent = 'Cevabı Gönder';
+            feedbackCard.className = 'card feedback-card';
+            feedbackMessage.textContent = 'Bilmece yükleniyor...';
+            feedbackDetail.textContent = 'Lütfen bekleyin...';
+
+            const success = await generateRiddle();
+            
+            if (success) {
+                feedbackMessage.textContent = 'Yukarıdaki bilmeceyi cevaplayın!';
+                feedbackDetail.textContent = 'Bol şans! 🍀';
+            }
+        }
+
+        function normalizeAnswer(text) {
+            // Türkçe karakterleri normalize et
+            return text.toLowerCase()
+                .trim()
+                .replace(/ı/g, 'i')
+                .replace(/ğ/g, 'g')
+                .replace(/ü/g, 'u')
+                .replace(/ş/g, 's')
+                .replace(/ö/g, 'o')
+                .replace(/ç/g, 'c');
+        }
+
+        function checkAnswer() {
+            if (answered) {
+                currentRiddle++;
+                loadRiddle();
+                return;
+            }
+
+            if (!currentRiddleData) return;
+
+            const userAnswer = normalizeAnswer(answerInput.value);
+            const correctAnswer = normalizeAnswer(currentRiddleData.cevap);
+
+            answered = true;
+            answerInput.disabled = true;
+
+            if (userAnswer === correctAnswer || answerInput.value.toLowerCase().trim() === currentRiddleData.cevap.toLowerCase().trim()) {
+                score += 10;
+                scoreDisplay.textContent = score;
+                feedbackCard.className = 'card feedback-card correct';
+                feedbackMessage.textContent = '🎉 Doğru!';
+                feedbackDetail.textContent = `Harika! 10 puan kazandınız!`;
+            } else {
+                feedbackCard.className = 'card feedback-card incorrect';
+                feedbackMessage.textContent = '❌ Yanlış';
+                feedbackDetail.textContent = `Doğru cevap: ${currentRiddleData.cevap}`;
+            }
+
+            submitBtn.textContent = currentRiddle < totalRiddles - 1 ? 'Sonraki Bilmece →' : 'Oyunu Bitir';
+        }
+
+        function showGameOver() {
+            const container = document.querySelector('.game-container');
+            container.innerHTML = `
+                <div class="header">
+                    <h1>🧩 Bilmece Ustası</h1>
+                </div>
+                <div class="card game-over">
+                    <h2>🎊 Oyun Tamamlandı! 🎊</h2>
+                    <div class="final-score">${score}</div>
+                    <div class="feedback-detail">${totalRiddles * 10} puan üzerinden ${score} puan aldınız!</div>
+                    <button class="restart-btn" onclick="location.reload()">Tekrar Oyna</button>
+                </div>
+            `;
+        }
+
+        submitBtn.addEventListener('click', checkAnswer);
+
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !submitBtn.disabled) {
+                checkAnswer();
+            }
+        });
+
+        // Oyunu başlat
+        loadRiddle();
+    </script>
+</body>
+</html>
